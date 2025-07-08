@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revolut Smart Wallet - Beta MVP</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0075EB, #2C2C54);
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 15px;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .btn-primary {
+      background-color: #5f27cd;
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #341f97;
+    }
+    .carousel-caption {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+    }
+    .table {
+      color: white;
+    }
+    .progress {
+      height: 20px;
+    }
+    #spendingChart {
+      max-width: 250px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#">Revolut</a>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="personaDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          Hi, Chandra
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#" onclick="switchPersona('Chandra')">Chandra Has Katti</a></li>
+          <li><a class="dropdown-item" href="#" onclick="switchPersona('Sophia')">Sophia Rivera</a></li>
+          <li><a class="dropdown-item" href="#" onclick="switchPersona('Thomas')">Thomas Green</a></li>
+        </ul>
+      </div>
+      <button class="btn btn-outline-light ms-auto" onclick="openModal('profileModal')">👤 Profiles</button>
+    </div>
+  </nav>
+
+  <!-- Main Dashboard -->
+  <div class="container mt-4">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card p-3">
+          <h5 class="card-title">Current Balance</h5>
+          <p class="card-text display-6" id="balance">€1,200</p>
+          <button class="btn btn-primary w-100" onclick="openModal('smartSaveModal')">💸 Smart Save</button>
+        </div>
+        <div class="card p-3 mt-4">
+          <h5 class="card-title">Spending by Category</h5>
+          <canvas id="spendingChart"></canvas>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card p-3">
+          <h5 class="card-title">Savings Goal</h5>
+          <p class="card-text">Weekend trip to Galway</p>
+          <div class="progress mb-2">
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%" id="savingsProgress">40%</div>
+          </div>
+          <button class="btn btn-primary w-100" onclick="addToGoal()">🚀 Add to Goal</button>
+        </div>
+        <div class="card mt-4 p-3">
+          <h5 class="card-title">Recent Transactions</h5>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jun 10</td>
+                <td>Grocery Store</td>
+                <td>€35.40</td>
+                <td>🥘 Food</td>
+              </tr>
+              <tr>
+                <td>Jun 09</td>
+                <td>Uber Ride</td>
+                <td>€12.20</td>
+                <td>🚗 Travel</td>
+              </tr>
+              <tr>
+                <td>Jun 08</td>
+                <td>Netflix</td>
+                <td>€9.99</td>
+                <td>🎥 Subscription</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center mt-5">
+    <p class="text-light">&copy; 2025 Revolut Beta MVP - Designed for Chandra Has Katti</p>
+  </footer>
+
+  <!-- Modals -->
+  <div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">Customer Profiles</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 text-center">
+              <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle mb-2" width="100">
+              <h6>Chandra Has Katti</h6>
+              <p>Email: chandra@example.com<br>Phone: +353 123456789</p>
+            </div>
+            <div class="col-md-4 text-center">
+              <img src="https://randomuser.me/api/portraits/women/45.jpg" class="rounded-circle mb-2" width="100">
+              <h6>Sophia Rivera</h6>
+              <p>Email: sophia@example.com<br>Phone: +351 987654321</p>
+            </div>
+            <div class="col-md-4 text-center">
+              <img src="https://randomuser.me/api/portraits/men/65.jpg" class="rounded-circle mb-2" width="100">
+              <h6>Thomas Green</h6>
+              <p>Email: thomas@example.com<br>Phone: +44 7712345678</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="smartSaveModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">Smart Save</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          💸 Smart Save activated! €5 moved to savings goal.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="sendMoneyModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">Send Money</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control mb-2" id="recipient" placeholder="Recipient Name">
+          <input type="number" class="form-control" id="amount" placeholder="Amount (€)">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="confirmSendMoney()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="exchangeModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">Exchange Currency</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          💱 Currency exchange simulation coming soon!
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const spendingChart = new Chart(document.getElementById('spendingChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Food', 'Travel', 'Shopping', 'Subscriptions'],
+        datasets: [{
+          data: [150, 80, 100, 50],
+          backgroundColor: ['#ff6b6b', '#54a0ff', '#1dd1a1', '#feca57']
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        responsive: true
+      }
+    });
+
+    function openModal(id) {
+      var modal = new bootstrap.Modal(document.getElementById(id));
+      modal.show();
+    }
+
+    function confirmSendMoney() {
+      let recipient = document.getElementById('recipient').value;
+      let amount = document.getElementById('amount').value;
+      if (recipient && amount) {
+        alert(`📤 Sent €${amount} to ${recipient} successfully!`);
+        var modal = bootstrap.Modal.getInstance(document.getElementById('sendMoneyModal'));
+        modal.hide();
+      } else {
+        alert("❌ Please fill out all fields.");
+      }
+    }
+
+    function addToGoal() {
+      let progress = document.getElementById("savingsProgress");
+      let width = parseInt(progress.style.width);
+      if (width < 100) {
+        width += 10;
+        progress.style.width = width + "%";
+        progress.innerHTML = width + "%";
+        alert('🚀 Added €50 to your Galway trip goal!');
+      } else {
+        alert('🎉 Savings goal achieved!');
+      }
+    }
+
+    function switchPersona(name) {
+      document.getElementById("personaDropdown").innerText = "Hi, " + name;
+      if (name === "Sophia") {
+        document.getElementById("balance").innerText = "€3,450";
+        spendingChart.data.datasets[0].data = [200, 50, 150, 80];
+      } else if (name === "Thomas") {
+        document.getElementById("balance").innerText = "€800";
+        spendingChart.data.datasets[0].data = [100, 20, 30, 10];
+      } else {
+        document.getElementById("balance").innerText = "€1,200";
+        spendingChart.data.datasets[0].data = [150, 80, 100, 50];
+      }
+      spendingChart.update();
+    }
+  </script>
+</body>
+</html>
