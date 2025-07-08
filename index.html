@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Revolut Smart Wallet - Beta MVP</title>
+  <title>Revolut Smart Wallet - AI Chatbot</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -29,19 +29,41 @@
     .btn-primary:hover {
       background-color: #341f97;
     }
-    .carousel-caption {
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 10px;
-    }
     .table {
       color: white;
     }
     .progress {
       height: 20px;
     }
+    #spendingChartContainer {
+      height: 250px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
     #spendingChart {
-      max-width: 250px;
-      margin: 0 auto;
+      max-width: 200px;
+    }
+    #chatBox {
+      background: #2C2C54;
+      border-radius: 10px;
+      height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .chat-message {
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 8px;
+    }
+    .user-message {
+      background-color: #5f27cd;
+      text-align: right;
+    }
+    .bot-message {
+      background-color: #1dd1a1;
+      text-align: left;
     }
   </style>
 </head>
@@ -60,7 +82,7 @@
           <li><a class="dropdown-item" href="#" onclick="switchPersona('Thomas')">Thomas Green</a></li>
         </ul>
       </div>
-      <button class="btn btn-outline-light ms-auto" onclick="openModal('profileModal')">👤 Profiles</button>
+      <button class="btn btn-outline-light ms-auto" onclick="openModal('supportModal')">🤖 AI Chat Support</button>
     </div>
   </nav>
 
@@ -75,7 +97,9 @@
         </div>
         <div class="card p-3 mt-4">
           <h5 class="card-title">Spending by Category</h5>
-          <canvas id="spendingChart"></canvas>
+          <div id="spendingChartContainer">
+            <canvas id="spendingChart"></canvas>
+          </div>
         </div>
       </div>
       <div class="col-md-6">
@@ -100,19 +124,19 @@
             </thead>
             <tbody>
               <tr>
-                <td>Jun 10</td>
+                <td>Jul 08</td>
                 <td>Grocery Store</td>
                 <td>€35.40</td>
                 <td>🥘 Food</td>
               </tr>
               <tr>
-                <td>Jun 09</td>
+                <td>Jul 07</td>
                 <td>Uber Ride</td>
                 <td>€12.20</td>
                 <td>🚗 Travel</td>
               </tr>
               <tr>
-                <td>Jun 08</td>
+                <td>Jul 06</td>
                 <td>Netflix</td>
                 <td>€9.99</td>
                 <td>🎥 Subscription</td>
@@ -130,36 +154,6 @@
   </footer>
 
   <!-- Modals -->
-  <div class="modal fade" id="profileModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content bg-dark text-white">
-        <div class="modal-header">
-          <h5 class="modal-title">Customer Profiles</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-4 text-center">
-              <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle mb-2" width="100">
-              <h6>Chandra Has Katti</h6>
-              <p>Email: chandra@example.com<br>Phone: +353 123456789</p>
-            </div>
-            <div class="col-md-4 text-center">
-              <img src="https://randomuser.me/api/portraits/women/45.jpg" class="rounded-circle mb-2" width="100">
-              <h6>Sophia Rivera</h6>
-              <p>Email: sophia@example.com<br>Phone: +351 987654321</p>
-            </div>
-            <div class="col-md-4 text-center">
-              <img src="https://randomuser.me/api/portraits/men/65.jpg" class="rounded-circle mb-2" width="100">
-              <h6>Thomas Green</h6>
-              <p>Email: thomas@example.com<br>Phone: +44 7712345678</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="modal fade" id="smartSaveModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content bg-dark text-white">
@@ -177,42 +171,23 @@
     </div>
   </div>
 
-  <div class="modal fade" id="sendMoneyModal" tabindex="-1">
-    <div class="modal-dialog">
+  <div class="modal fade" id="supportModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content bg-dark text-white">
         <div class="modal-header">
-          <h5 class="modal-title">Send Money</h5>
+          <h5 class="modal-title">AI Chat Support</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <input type="text" class="form-control mb-2" id="recipient" placeholder="Recipient Name">
-          <input type="number" class="form-control" id="amount" placeholder="Amount (€)">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="confirmSendMoney()">Send</button>
+          <div id="chatBox"></div>
+          <input type="text" id="chatInput" class="form-control mt-2" placeholder="Ask me anything about your Revolut account...">
+          <button class="btn btn-primary mt-2 w-100" onclick="aiChatbotResponse()">Send</button>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="modal fade" id="exchangeModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
-        <div class="modal-header">
-          <h5 class="modal-title">Exchange Currency</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          💱 Currency exchange simulation coming soon!
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
+  <!-- Bootstrap JS and Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const spendingChart = new Chart(document.getElementById('spendingChart'), {
@@ -226,25 +201,21 @@
       },
       options: {
         maintainAspectRatio: false,
-        responsive: true
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: 'white'
+            }
+          }
+        }
       }
     });
 
     function openModal(id) {
       var modal = new bootstrap.Modal(document.getElementById(id));
       modal.show();
-    }
-
-    function confirmSendMoney() {
-      let recipient = document.getElementById('recipient').value;
-      let amount = document.getElementById('amount').value;
-      if (recipient && amount) {
-        alert(`📤 Sent €${amount} to ${recipient} successfully!`);
-        var modal = bootstrap.Modal.getInstance(document.getElementById('sendMoneyModal'));
-        modal.hide();
-      } else {
-        alert("❌ Please fill out all fields.");
-      }
     }
 
     function addToGoal() {
@@ -273,6 +244,44 @@
         spendingChart.data.datasets[0].data = [150, 80, 100, 50];
       }
       spendingChart.update();
+    }
+
+    function aiChatbotResponse() {
+      const chatBox = document.getElementById('chatBox');
+      const input = document.getElementById('chatInput');
+      const userMessage = input.value.trim();
+      if (userMessage) {
+        const userDiv = document.createElement('div');
+        userDiv.classList.add('chat-message', 'user-message');
+        userDiv.innerText = userMessage;
+        chatBox.appendChild(userDiv);
+
+        // Simulate AI response
+        setTimeout(() => {
+          const botDiv = document.createElement('div');
+          botDiv.classList.add('chat-message', 'bot-message');
+          let botReply = generateBotReply(userMessage);
+          botDiv.innerText = botReply;
+          chatBox.appendChild(botDiv);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }, 800);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+        input.value = '';
+      }
+    }
+
+    function generateBotReply(message) {
+      message = message.toLowerCase();
+      if (message.includes('balance')) {
+        return "Your current balance is €1,200. Would you like to view your transactions?";
+      } else if (message.includes('goal')) {
+        return "You are 40% towards your weekend trip goal. Keep saving!";
+      } else if (message.includes('help')) {
+        return "Sure! How can I assist you today: account, card, or payments?";
+      } else {
+        return "I'm sorry, I didn’t understand that. Can you please rephrase?";
+      }
     }
   </script>
 </body>
